@@ -1,5 +1,8 @@
 -- copied from Music Mod Callback with some stuff removed
 
+local constants = require("scripts.minimapapi.constants")
+local CALLBACK_PRIORITY = constants.CALLBACK_PRIORITY
+
 local cache = {}
 
 cache.Mod = RegisterMod("MinimapAPI Cache", 1)
@@ -18,7 +21,7 @@ function cache.ReloadRoomCache()
 	cache.CurrentRoomIndex = cache.Level:GetCurrentRoomIndex()
 	cache.RoomType = cache.Room:GetType()
 	cache.Seeds = cache.Game:GetSeeds()
-	
+
 	--Dimension
 	if REPENTANCE then
 		if GetPtrHash(cache.RoomDescriptor) == GetPtrHash(cache.Level:GetRoomByIdx(cache.CurrentRoomIndex, 0)) then
@@ -28,12 +31,12 @@ function cache.ReloadRoomCache()
 		else
 			cache.Dimension = 1
 		end
-		
+
 		cache.MirrorDimension = cache.Dimension == 1 and (cache.Stage == LevelStage.STAGE1_1 and cache.Level:GetCurses() & LevelCurse.CURSE_OF_LABYRINTH == LevelCurse.CURSE_OF_LABYRINTH or cache.Stage == LevelStage.STAGE1_2) and (cache.StageType == StageType.STAGETYPE_REPENTANCE or cache.StageType == StageType.STAGETYPE_REPENTANCE_B)
 	end
 end
 cache.ReloadRoomCache()
 
-mod:AddCallback(ModCallbacks.MC_POST_NEW_ROOM, cache.ReloadRoomCache)
+mod:AddPriorityCallback(ModCallbacks.MC_POST_NEW_ROOM, CALLBACK_PRIORITY, cache.ReloadRoomCache)
 
 return cache
