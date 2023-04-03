@@ -284,7 +284,7 @@ local function niceJourney_PostRender()
     end
 
     local pressed = Input.IsMouseBtnPressed(Mouse.MOUSE_BUTTON_LEFT) or
-        Input.IsActionPressed(ButtonAction.ACTION_MENUCONFIRM, 0)
+        Input.IsActionPressed(ButtonAction.ACTION_MENUCONFIRM, playerController)
     if pressed and not WasTriggered and teleportTarget
         and teleportTarget ~= 'current' then
         WasTriggered = true
@@ -295,25 +295,23 @@ local function niceJourney_PostRender()
     end
 end
 
-MinimapAPI:AddPriorityCallback(
+MinimapAPI:AddCallbackFunc(
     ModCallbacks.MC_POST_UPDATE,
     CALLBACK_PRIORITY,
     function(_)
         if tabPressTimeStart > 1000 and not controlsDisabled and cursorMovedWithKeyboard then
-            print("yes")
             Isaac.GetPlayer(0).ControlsEnabled = false
             controlsDisabled = true
         elseif tabPressTimeStart == 0 and controlsDisabled then
             Isaac.GetPlayer(0).ControlsEnabled = true
             controlsDisabled = false
-            print("no")
         end
     end
 )
 
 local addRenderCall = true
 
-MinimapAPI:AddPriorityCallback(
+MinimapAPI:AddCallbackFunc(
     ModCallbacks.MC_POST_GAME_STARTED,
     CALLBACK_PRIORITY,
     function(_, _)
@@ -321,11 +319,11 @@ MinimapAPI:AddPriorityCallback(
             if StageAPI and StageAPI.Loaded then
                 StageAPI.AddCallback("MinimapAPI", "POST_HUD_RENDER", constants.STAGEAPI_CALLBACK_PRIORITY, niceJourney_PostRender)
             else
-                MinimapAPI:AddPriorityCallback(ModCallbacks.MC_POST_RENDER, CALLBACK_PRIORITY, niceJourney_PostRender)
+                MinimapAPI:AddCallbackFunc(ModCallbacks.MC_POST_RENDER, CALLBACK_PRIORITY, niceJourney_PostRender)
             end
             addRenderCall = false
         end
     end
 )
 
-MinimapAPI:AddPriorityCallback(ModCallbacks.MC_EXECUTE_CMD, CALLBACK_PRIORITY, niceJourney_ExecuteCmd)
+MinimapAPI:AddCallbackFunc(ModCallbacks.MC_EXECUTE_CMD, CALLBACK_PRIORITY, niceJourney_ExecuteCmd)
