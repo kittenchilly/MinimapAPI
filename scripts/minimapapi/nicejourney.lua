@@ -300,11 +300,17 @@ MinimapAPI:AddCallbackFunc(
     ModCallbacks.MC_POST_UPDATE,
     CALLBACK_PRIORITY,
     function(_)
-        if tabPressTimeStart > 1000 and not controlsDisabled and cursorMovedWithKeyboard then
+        if tabPressTimeStart > 1000 and not controlsDisabled and cursorMovedWithKeyboard and MinimapAPI:GetConfig("MouseTeleportDisableMovement") then
             Isaac.GetPlayer(0).ControlsEnabled = false
+            if MinimapAPI.isRepentance and Isaac.GetPlayer(0):GetOtherTwin() then
+                Isaac.GetPlayer(0):GetOtherTwin().ControlsEnabled = false
+            end
             controlsDisabled = true
         elseif tabPressTimeStart == 0 and controlsDisabled then
             Isaac.GetPlayer(0).ControlsEnabled = true
+            if MinimapAPI.isRepentance and Isaac.GetPlayer(0):GetOtherTwin() then
+                Isaac.GetPlayer(0):GetOtherTwin().ControlsEnabled = true
+            end
             controlsDisabled = false
         end
     end
